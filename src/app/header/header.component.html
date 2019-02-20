@@ -1,0 +1,17 @@
+<header>
+  <nav class="navbar">
+    <a class="navbar-brand" routerLink="/" aria-label="Title">
+    </a>
+    <button class="navbar-toggler d-md-none" (click)="toggleCollapse()" [attr.aria-expanded]="collapse=='open'" aria-controls="#collapsableNav"
+      attr.aria-label="navigationMenuAria">
+    </button>
+  </nav>
+</header>
+<div class="navbar-expanded" [ngClass]="collapse">
+  <nav class="navigation-links">
+    <ul class="horizontal-link-menu" (click)="toggleCollapse()" [hidden]="!userId">
+    </ul>
+  </nav>
+  <footer class="sticky-footer">
+  </footer>
+</div>

@@ -1,0 +1,12 @@
+.printer-only {
+  display: none;
+}
+
+@media print {
+  .not-printable {
+    display: none;
+  }
+  .printer-only {
+    display: block;
+  }
+}

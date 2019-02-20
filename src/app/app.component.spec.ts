@@ -1,27 +1,68 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, async, ComponentFixture } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { AnimationService } from './core/services/animation.service';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable, Subject } from 'rxjs';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
+import { Router } from '@angular/router';
+
+class MockRouter {
+  private subject = new Subject();
+  public events = this.subject.asObservable();
+}
 describe('AppComponent', () => {
-  beforeEach(async(() => {
+  let app: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+
+  let translateServiceStub: Partial<TranslateService>;
+  let animationServiceStub: Partial<AnimationService>;
+  let mockRouter: MockRouter;
+
+  beforeEach(() => {
+    translateServiceStub = {
+      setDefaultLang() { }
+    };
+    animationServiceStub = {
+      getAnimation() {
+        return new Observable<any>();
+      }
+    };
+  });
+  mockRouter = new MockRouter();
+
+  beforeEach(async () => {
+
+    TestBed.resetTestEnvironment();
+    TestBed.initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
+
     TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
+      imports: [BrowserAnimationsModule],
+      declarations: [AppComponent],
+      providers: [
+        { provide: TranslateService, useValue: translateServiceStub },
+        { provide: AnimationService, useValue: animationServiceStub },
+        { provide: Router, useValue: mockRouter },
       ],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-  it('should create the app', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
-  }));
-  it(`should have as title 'app'`, async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('app');
-  }));
-  it('should render title in a h1 tag', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.overrideComponent(AppComponent, {
+      set: {
+        template: `<app-header></app-header>
+            <main class="main-content">
+                <router-outlet></router-outlet>
+            </main>`
+      }
+    }).createComponent(AppComponent);
+    app = fixture.debugElement.componentInstance;
     fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to angular-boilerplate!');
+  });
+
+  it('should create the app', async(() => {
+    expect(app).not.toBeNull();
   }));
 });
